@@ -74,6 +74,10 @@ class Screen:
             cls.s.append(' ')
 
     def putchar(cls, c, m, n):
+        """
+        Position character appropriately
+        cls.putchar(char, ht_m_from_top, wd_n_from_left)
+        """
         if m < 0 or m >= cls.h or n < 0 or n >= cls.w:
             cls.display_error("class Screen: putchar: position out of range.")
         else:
@@ -81,11 +85,18 @@ class Screen:
             cls.s[pos_in_string] = c
 
     def putline(cls, l, i, m):
+        """
+        Print line
+        cls.putline(line, indent, at_line_number_from_top)
+        """
         lenline = len(l)
         for p in range(min((lenline+i), cls.w) - i):
             cls.putchar(l[p], m, p+i)
 
     def display(cls):
+        """
+        display the current screen.
+        """
         for i in range(cls.h):
             string_of_line=""
             for j in range(cls.w):
@@ -94,9 +105,18 @@ class Screen:
         print cls.w*"-"
 
     def display_error(cls, l):
-        cls.putline(" ", 5, 4)
-        cls.putline(l, 5, 5)
-        cls.putline(" ", 5, 6)
+        """
+        Display errors
+        """
+        cls.putline(" "*cls.w, 0, 2)
+        cls.putline(" "*cls.w, 0, 3)
+        cls.putline("ERROR", (cls.w / 2 - 3), 3)
+        cls.putline(" "*cls.w, 0, 4)
+        cls.putline(" "*cls.w, 0, 5)
+        cls.putline("!     ", 0, 5)
+        cls.putline(l, 3, 5)
+        cls.putline(" "*cls.w, 0, 6)
+        cls.putline(" "*cls.w, 0, 7)
         cls.display()
 
     def create_body(cls, str_ln, ch, ind):
