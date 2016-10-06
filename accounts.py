@@ -5,12 +5,68 @@ from mlist import *
 import os.path
 
 def safe_float(str) :
+    success = True
     try :
         f = float(str)
     except ValueError :
         print "accounts: safe_float: invalid number. Substituting 0."
         f = 0.0
-    return f
+        success = False
+    return (f, success)
+
+def encode_item_name(itnm) :
+    lenitnm = len(itnm)
+    encitnm = ""
+    for c in itnm :
+        # print c, encitnm, itnm
+        if c == '$' :
+            encitnm = encitnm + "#d"
+        elif c == "." :
+            encitnm = encitnm + "#p"
+        elif c == "#" :
+            encitnm = encitnm + "##"
+        elif c == " " :
+            encitnm = encitnm + "#s"
+        else :
+            encitnm = encitnm + c
+    return encitnm
+
+def decode_item_name(encitnm) :
+    lei = len(encitnm)
+    itnm = ""
+    interpret = False
+    for i in range(lei) :
+        c = encitnm[i]
+        if interpret :
+            if c == 'd' :
+                itnm = itnm + "$"
+            elif c == 'p' :
+                itnm = itnm + '.'
+            elif c == 's' :
+                itnm = itnm + ' '
+            elif c == '#' :
+                itnm = itnm + '#'
+            else :
+                print "accounts: decode_item_name: ignoring # command: {:s}.".format(c)
+                itnm = itnm + c
+            interpret = False
+        else :
+            if c == '#' :
+                if i == lei - 1 :
+                    print "accounts: decode_item_name: {:s} is not complete.".format(encitnm)
+                else :
+                    interpret = True
+            else :
+                itnm = itnm + c
+    return itnm
+
+def encode_item_price(iptup) :
+    encstr = "{:s}${:012.4f}".format(iptup[0], 0.0)
+    if abs(iptup[1]) > 10**7 :
+        print "accounts: encode_item_price: price is too high for this code."
+    else :
+        encstr = "{:s}${:012.4f}".format(encode_item_name(iptup[0]), iptup[1])
+    return encstr
 
 def decode_item_price(str) :
     lenstr = len(str)
@@ -33,16 +89,20 @@ def decode_item_price(str) :
         else :
             i = dollarpos[0]
             item = str[:i]
-            price = safe_float(str[(i+1):])
+            (price, succ) = safe_float(str[(i+1):])
+            if not succ :
+                print "accounts: decode_item_price: price `{:s}' is absurd.".format(str[(i+1):])
     return (item, price)
 
-def encode_item_price(iptup) :
-    encstr = "{:s}${:012.4f}".format(iptup[0], 0.0)
-    if abs(iptup[1]) > 10**7 :
-        print "accounts: encode_item_price: price is too high for this code."
+def output_item_price(str) :
+    (it, p) = decode_item_price(str)
+    error = False
+    if it == "DIPError" :
+        error = True
+        retstr = "Error decoding line"
     else :
-        encstr = "{:s}${:012.4f}".format(iptup[0], iptup[1])
-    return encstr
+        retstr = "{:12s} ({:9.4f})".format(decode_item_name(it), p)
+    return retstr
 
 class AccList(MList) :
     """
@@ -50,3 +110,13 @@ class AccList(MList) :
         functions. But some functions have to be modified to take care of
         the price entry.
     """
+
+    def __init__(cls, afile="acc.txt") :
+        cls.t = Tree('acc')
+        cls.s = Screen()
+        cls.afile = afile
+        if os.path.isfile(afile) :
+            cls.t.load(afile)
+
+    # def display_and_ask(cls, scheme, lstpage=1, optpage=1) :
+
