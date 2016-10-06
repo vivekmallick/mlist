@@ -60,6 +60,16 @@ class MList:
             optList.append(('u', 'go up'))
             optList.append(('m', 'mark'))
             optList.append(('q', 'quit'))
+        elif scheme == 'accounts' :
+            optList.append(('a', 'add'))
+            optList.append(('d', 'delete'))
+            optList.append(('e', 'edit'))
+            optList.append(('p', 'price'))
+            optList.append(('s', 'sublist'))
+            optList.append(('u', 'go up'))
+            optList.append(('m', 'mark'))
+            optList.append(('r', 'refresh'))
+            optList.append(('q', 'quit'))
         else :
             cls.error("options: scheme does not exist: " + scheme)
         return optList
