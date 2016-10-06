@@ -98,11 +98,25 @@ class MList:
             cls.error("descend: {:s} is not a number.".format(desc_to_str))
 
 
+    def edit_entry(cls) :
+        entry_no_str = raw_input('Edit item number> ')
+        entry_no = safe_int(entry_no_str)
+        if entry_no != -1 :
+            if 1 <= entry_no and entry_no <= len(cls.t.list()) :
+                entry_string = cls.t.list()[entry_no - 1]
+                rep_prompt = "Repace {:s} by > ".format(entry_string)
+                alt_string = raw_input(rep_prompt)
+                cls.t.edit(entry_string, alt_string)
+            else :
+                cls.error('edit_entry: entry number out of range')
+        else :
+            cls.error('edit_entry: item number should be a number.')
+
     def default_act(cls, reply):
         cls.error("Unknown command: {:s}.".format(reply))
         # raw_input()
 
-    def interact(cls):
+    def interact_todo(cls):
         scheme = 'default'
         reply = cls.display_and_ask(scheme)
         opt = 1
@@ -117,14 +131,23 @@ class MList:
             elif reply == 'u' :
                 cls.t.go_up()
             elif reply == 'm' :
-                cls.error("mark not implemented")
+                cls.error("interact: mark not implemented")
             elif reply == 'o' :
                 no_opt_pg = cls.s.no_of_opts(len(cls.options(scheme)))
-                print opt,
-                opt = (opt % no_opt_pg) + 1
-                print no_opt_pg, opt
+                # print opt,
+                if no_opt_pg > 0 :
+                    opt = (opt % no_opt_pg) + 1
+                else :
+                    cls.error("interact: no options")
+                # print no_opt_pg, opt
             elif reply == 'n' :
-                page = (page % cls.s.no_of_pages(len(cls.t.list()))) + 1
+                no_pages = cls.s.no_of_pages(len(cls.t.list()))
+                if no_pages > 0 :
+                    page = (page % no_pages) + 1
+                else :
+                    cls.error("interact: no entries")
+            elif reply == 'e' :
+                cls.edit_entry()
             else :
                 cls.default_act(reply)
             cls.save()
@@ -135,4 +158,4 @@ if __name__ == '__main__':
     m = MList()
     # reply = m.display_and_ask('default')
     # print "Reply is {:s}.".format(reply)
-    m.interact()
+    m.interact_todo()

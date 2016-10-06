@@ -205,7 +205,7 @@ class Screen:
         no_pg = int(math.ceil(float(n) / no_entries_per_page))
         return no_pg
 
-    def display_list(cls, lst, l_obj_pair, page_no):
+    def display_list_prim(cls, lst, l_obj_pair, page_no):
         l_obj_pair.append(('n', 'Next'))
         if len(l_obj_pair) < 4:
             no_entries_per_page = cls.h - 4
@@ -228,6 +228,12 @@ class Screen:
         else :
             cls.display_error("Screen: display_list: page_no out of range: {:d}".format(page_no))
         cls.display_page(str_ln, l_obj_pair)
+
+    def display_list(cls, lst, l_obj_pair, page_no) :
+      if len(lst) != 0 :
+        cls.display_list_prim(lst, l_obj_pair, page_no)
+      else :
+        cls.display_error("Screen: display_list: list is empty")
 
     def clear_display_list(cls, lst, l_obj_pair, page_no):
         cls.clear_page()

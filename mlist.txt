@@ -9,6 +9,11 @@ mlist.Crayon
 mlist.Furniture.Sofa
 mlist.Furniture.TVCabinet
 mlist.Furniture.Bed
-mlist.Furniture.Bookshelf
+mlist.Furniture.Wardrobe
 mlist.Spaceship
 mlist.Spaceship.innovation
+mlist.Books.hartshorne
+mlist.Books.griffiths
+mlist.Books.bump
+mlist.Books.hartshorne.alggeom
+mlist.Books.hartshorne.deformations
