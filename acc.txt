@@ -1,0 +1,13 @@
+acc$0#p0
+acc$0#p0.Paper#sReam$0000325#p0000
+acc$0#p0.Stapler$0000050#p0000
+acc$0#p0.laptop#snotebook$0035000#p0000
+acc$0#p0.Projector$0034000#p0000
+acc$0#p0.sla$0021000#p0000
+acc$0#p0.Tribunal$0002685#p0000.travel#sagent$0000250#p0000
+acc$0#p0.Tribunal$0002685#p0000.stock#sexchage$0002435#p0000
+acc$0#p0.us#s#ds$0000482#p2300
+acc$0#p0.us#s#ds$0000482#p2300.travel#sagent$0000250#p0000
+acc$0#p0.us#s#ds$0000482#p2300.food$0000232#p2300
+acc$0#p0.sla$0021000#p0000.camera$0020000#p0000
+acc$0#p0.sla$0021000#p0000.tripod$0001000#p0000
