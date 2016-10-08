@@ -124,6 +124,15 @@ def output_item_price(str) :
         retstr = "({:9.2f}) {:s}".format(p, decode_item_name(it))
     return retstr
 
+def updated_node(node, lst_nodes) :
+    (item, price) = decode_item_price(node)
+    possible_node = None
+    for nd in lst_nodes :
+        (itnd, itp) = decode_item_price(nd)
+        if item == itnd :
+            possible_node = nd
+    return possible_node
+
 class AccList(MList) :
     """
         This is an extension of the mlist. It will mostly use mlist
@@ -261,9 +270,12 @@ class AccList(MList) :
         seqnodes = path_to_seq_nodes(save_curr_node)
         # print seqnodes
         for node in seqnodes[1:] :
-            cls.t.jump_to(node)
+            update_node = updated_node(node, cls.t.list())
+            if update_node == None :
+                cls.error("Some bug in software.")
+            else :
+                cls.t.jump_to(update_node)
 
-        cls.save()
         return total_expenditure
 
         
