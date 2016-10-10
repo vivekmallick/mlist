@@ -48,7 +48,7 @@ class Screen:
             display(): Just displays the present page.
     """
 
-    def __init__(cls, ht=12, wd=40) :
+    def __init__(cls, ht=16, wd=42) :
         """Initialize the screen"""
         cls.h = ht
         cls.w = wd
@@ -104,19 +104,52 @@ class Screen:
             print string_of_line
         print cls.w*"-"
 
+    def break_into_lines(cls, l) :
+        width = cls.w - 4
+        list_of_lines = []
+        line = ""
+        word = ""
+        for c in l :
+            if c == ' ' :
+                if len(line + " " + word) > width :
+                    list_of_lines.append(line)
+                    line = word
+                    word = ""
+                else :
+                    if line == "" :
+                        line = word
+                    else :
+                        line = line + ' ' + word
+                    word = ""
+            else :
+                word = word + c
+        if len(line + " " + word) > width :
+            list_of_lines.append(line)
+            line = word
+        else :
+            line = line + ' ' + word
+            word = ""
+        list_of_lines.append(line)
+ 
+        return list_of_lines
+
+
     def display_error(cls, l):
         """
         Display errors
         """
-        cls.putline(" "*cls.w, 0, 2)
-        cls.putline(" "*cls.w, 0, 3)
-        cls.putline("ERROR", (cls.w / 2 - 3), 3)
-        cls.putline(" "*cls.w, 0, 4)
-        cls.putline(" "*cls.w, 0, 5)
-        cls.putline("!     ", 0, 5)
-        cls.putline(l, 3, 5)
-        cls.putline(" "*cls.w, 0, 6)
-        cls.putline(" "*cls.w, 0, 7)
+
+        list_of_lines = cls.break_into_lines(l)
+        no_lines = len(list_of_lines)
+
+        if no_lines > cls.h - 3 :
+            no_lines = cls.h - 3
+        
+        cls.clear_page()
+
+        cls.center_string("ERROR!", 1)
+        for i in range(no_lines) :
+            cls.putline(list_of_lines[i], 2, (i+3))
         cls.display()
 
     def create_body(cls, str_ln, ch, ind):

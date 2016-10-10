@@ -133,6 +133,14 @@ def updated_node(node, lst_nodes) :
             possible_node = nd
     return possible_node
 
+def name_in_list(name, lst_nodes) :
+    is_name_in_list = False
+    for node in lst_nodes :
+        (it, pr) = decode_item_price(node)
+        if name == decode_item_name(it) :
+            is_name_in_list = True
+    return is_name_in_list
+
 class AccList(MList) :
     """
         This is an extension of the mlist. It will mostly use mlist
@@ -173,12 +181,15 @@ class AccList(MList) :
         itm = raw_input(' Item> ')
         str_prc = raw_input('Price> ')
         (prc, succ_conv) = safe_float(str_prc)
-        if succ_conv :
-            entry = encode_item_price((itm, prc))
+        if name_in_list(itm, cls.t.list()) :
+            cls.error("add_entry: item is already listed. Nothing added")
         else :
-            cls.error("Price should be a floating number.")
-            entry = encode_item_price((itm, 0.0))
-        cls.t.add(entry)
+            if succ_conv :
+                entry = encode_item_price((itm, prc))
+            else :
+                cls.error("add_entry: price should be a floating number.")
+                entry = encode_item_price((itm, 0.0))
+            cls.t.add(entry)
 
     def edit_item_name(cls) :
         ent_no_str = raw_input('Item number> ')
