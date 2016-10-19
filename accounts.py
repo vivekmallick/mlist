@@ -79,7 +79,8 @@ def decode_item_name(encitnm) :
     return itnm
 
 def encode_item_price(iptup) :
-    encstr = "{:s}${:012.4f}".format(encode_item_name(iptup[0]), 0.0)
+    price_zero = encode_item_name("{:012.4f}".format(0.0))
+    encstr = "{:s}${:s}".format(encode_item_name(iptup[0]), price_zero)
     if abs(iptup[1]) > 10**7 :
         print "accounts: encode_item_price: price is too high for this code."
     else :
