@@ -149,7 +149,7 @@ class AccList(MList) :
         the price entry.
     """
 
-    def __init__(cls, afile="acc.txt") :
+    def __init__(cls, afile="/mnt/m_internal_storage/com.hipipal.qpyplus/scripts/acc.txt") :
         cls.t = Tree('acc$0#p0')
         cls.s = Screen()
         cls.afile = afile
@@ -231,6 +231,7 @@ class AccList(MList) :
             cls.error("edit_item_price: please enter a number")
 
     def compute_sums(cls) :
+        print "Wait ... computing sums ..."
         save_curr_node = cls.t.currnode()
 
         # Get to root
@@ -326,10 +327,12 @@ class AccList(MList) :
                 cls.edit_item_name()
             elif reply == 'p' :
                 cls.edit_item_price()
+            elif reply == 'r' :
+                tot_exp_str = "{:12.2f}".format(cls.compute_sums())
             else :
                 cls.default_act(reply)
             cls.save()
-            tot_exp_str = "{:12.2f}".format(cls.compute_sums())
+            # tot_exp_str = "{:12.2f}".format(cls.compute_sums())
             reply = cls.display_and_ask(scheme, tot_exp_str, page, opt)
         print "Good bye"
 
