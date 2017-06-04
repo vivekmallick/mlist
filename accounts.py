@@ -22,6 +22,23 @@ def path_to_seq_nodes(str) :
         print "accounts: cannot proccess empty paths."
     return seqnodes
 
+def sep_last_word(str):
+    l = len(str)
+    b = l
+    stay_in_loop = True
+    while b >= 1 and stay_in_loop :
+        if str[b - 1] == ' ' :
+            lw = str[b:]
+            rt = str[:b-1]
+            stay_in_loop = False
+        else :
+            b -= 1
+    if b == 0 :
+        lw = str
+        rt = ""
+    return (rt, lw)
+
+
 def safe_float(str) :
     success = True
     try :
@@ -172,15 +189,14 @@ class AccList(MList) :
         cls.s.clear_display_list_w_opt(list_of_prices, cls.options(scheme), lstpage, optpage)
         curritemprice = decode_item_price(find_name(cls.t.currnode()))
         curritem = decode_item_name(curritemprice[0])
-        cls.s.rt_justify_string(curritem, 0)
-        cls.s.center_string(total_str, 0)
+        currprice = "{:9.2f}".format(curritemprice[1])
+        cls.s.rt_justify_string(currprice, 0)
+        cls.s.center_string(curritem, 0)
         cls.s.display()
         a = raw_input('acc> ')
         return a
 
-    def add_entry(cls) :
-        itm = raw_input(' Item> ')
-        str_prc = raw_input('Price> ')
+    def add_entry_base(cls, itm, str_prc) :
         (prc, succ_conv) = safe_float(str_prc)
         if name_in_list(itm, cls.t.list()) :
             cls.error("add_entry: item is already listed. Nothing added")
@@ -191,6 +207,11 @@ class AccList(MList) :
                 cls.error("add_entry: price should be a floating number.")
                 entry = encode_item_price((itm, 0.0))
             cls.t.add(entry)
+
+    def add_entry(cls) :
+        itm = raw_input(' Item> ')
+        str_prc = raw_input('Price> ')
+        cls.add_entry_base(itm, str_prc)
 
     def edit_item_name(cls) :
         ent_no_str = raw_input('Item number> ')
@@ -230,8 +251,39 @@ class AccList(MList) :
         else :
             cls.error("edit_item_price: please enter a number")
 
+    def descend_base (cls, desc_to) :
+        if 1 <= desc_to and desc_to <= len(cls.t.list()):
+            cls.t.jump_to(cls.t.list()[desc_to - 1])
+        else :
+            cls.error("descend: {:d} is out of range.".format(desc_to))
+
+    def descend(cls) :
+        desc_to_str = raw_input('Descend to item> ')
+        desc_to = safe_int(desc_to_str)
+        if desc_to != -1 :
+            cls.descend_base(desc_to)
+        else :
+            cls.error("descend: {:s} is not a number.".format(desc_to_str))
+
+    def default_act(cls, reply) :
+        no_if_so = safe_int(reply)
+        if no_if_so == -1 :
+            # The entry is not a number. Treat it as a new item.
+            # First try to extract price.
+            (rest, lw) = sep_last_word(reply)
+            (pr, suc) = safe_float(lw)
+            if suc :
+                cls.error("default: adding " + rest + " with price " + lw)
+                cls.add_entry_base(rest, lw)
+            else :
+                cls.error("default: adding " + reply + ". Input price.")
+                str_prc = raw_input('Price> ')
+                cls.add_entry_base(reply, str_prc)
+        else :
+            cls.error("default: descending to " + reply)
+            cls.descend_base(no_if_so)
+
     def compute_sums(cls) :
-        print "Wait ... computing sums ..."
         save_curr_node = cls.t.currnode()
 
         # Get to root
@@ -243,6 +295,7 @@ class AccList(MList) :
         sum.append(0)
         stayInWhile = True
         while stayInWhile :
+            print sum[:level+1]
             if itno[level] == len(cls.t.list()) :
                 if level > 0 :
                     cls.t.go_up()
