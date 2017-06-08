@@ -3,6 +3,7 @@ from screen import *
 from mlist import *
 
 import os.path
+import time
 
 def path_to_seq_nodes(str) :
     seqnodes = []
@@ -179,6 +180,11 @@ class AccList(MList) :
         cls.s.display_error(err)
         raw_input("press enter to continue")
 
+    def info(cls, inf_str) :
+        inf = "account: " + inf_str
+        cls.s.display_error(inf)
+        time.sleep(2)
+
     def save(cls) :
         cls.t.write_out(cls.afile)
 
@@ -266,22 +272,23 @@ class AccList(MList) :
             cls.error("descend: {:s} is not a number.".format(desc_to_str))
 
     def default_act(cls, reply) :
-        no_if_so = safe_int(reply)
-        if no_if_so == -1 :
-            # The entry is not a number. Treat it as a new item.
-            # First try to extract price.
-            (rest, lw) = sep_last_word(reply)
-            (pr, suc) = safe_float(lw)
-            if suc :
-                cls.error("default: adding " + rest + " with price " + lw)
-                cls.add_entry_base(rest, lw)
+        if reply != '' :
+            no_if_so = safe_int(reply)
+            if no_if_so == -1 :
+                # The entry is not a number. Treat it as a new item.
+                # First try to extract price.
+                (rest, lw) = sep_last_word(reply)
+                (pr, suc) = safe_float(lw)
+                if suc :
+                    cls.info("default: adding " + rest + " with price " + lw)
+                    cls.add_entry_base(rest, lw)
+                else :
+                    cls.info("default: adding " + reply + ". Input price.")
+                    str_prc = raw_input('Price> ')
+                    cls.add_entry_base(reply, str_prc)
             else :
-                cls.error("default: adding " + reply + ". Input price.")
-                str_prc = raw_input('Price> ')
-                cls.add_entry_base(reply, str_prc)
-        else :
-            cls.error("default: descending to " + reply)
-            cls.descend_base(no_if_so)
+                cls.error("default: descending to " + reply)
+                cls.descend_base(no_if_so)
 
     def compute_sums(cls) :
         save_curr_node = cls.t.currnode()
