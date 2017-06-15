@@ -183,7 +183,7 @@ class AccList(MList) :
     def info(cls, inf_str) :
         inf = "account: " + inf_str
         cls.s.display_error(inf)
-        time.sleep(2)
+        time.sleep(1)
 
     def save(cls) :
         cls.t.write_out(cls.afile)
@@ -201,6 +201,10 @@ class AccList(MList) :
         cls.s.display()
         a = raw_input('acc> ')
         return a
+
+    def jump_to_last_page(cls) :
+        last_page = cls.s.no_of_pages(len(cls.t.list()))
+        return last_page
 
     def add_entry_base(cls, itm, str_prc) :
         (prc, succ_conv) = safe_float(str_prc)
@@ -287,7 +291,7 @@ class AccList(MList) :
                     str_prc = raw_input('Price> ')
                     cls.add_entry_base(reply, str_prc)
             else :
-                cls.error("default: descending to " + reply)
+                cls.info("default: descending to " + reply)
                 cls.descend_base(no_if_so)
 
     def compute_sums(cls) :
@@ -358,15 +362,21 @@ class AccList(MList) :
         reply = cls.display_and_ask(scheme, tot_exp_str)
         opt = 1
         page = 1
+        # In the following the call to jump_to_last_page is not very smooth.
+        # Find a better way to handle it in the corresponding functions.
+        # May be all functions return the page number.
         while reply != 'q' :
             if reply == 'a' :
                 cls.add_entry()
+                page = cls.jump_to_last_page()
             elif reply == 'd' :
                 cls.delete_entry()
             elif reply == 's' :
                 cls.descend()
+                page = cls.jump_to_last_page()
             elif reply == 'u' :
                 cls.t.go_up()
+                page = cls.jump_to_last_page()
             elif reply == 'm' :
                 cls.error("interact: mark not implemented")
             elif reply == 'o' :
@@ -391,6 +401,7 @@ class AccList(MList) :
                 tot_exp_str = "{:12.2f}".format(cls.compute_sums())
             else :
                 cls.default_act(reply)
+                page = cls.jump_to_last_page()
             cls.save()
             # tot_exp_str = "{:12.2f}".format(cls.compute_sums())
             reply = cls.display_and_ask(scheme, tot_exp_str, page, opt)
